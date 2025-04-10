@@ -1,0 +1,115 @@
+import java.util.ArrayList;
+
+// User class with encapsulation
+class User {
+    private String name;
+    private int age;
+    private double weight;
+
+    public User(String name, int age, double weight) {
+        this.name = name;
+        this.age = age;
+        this.weight = weight;
+    }
+
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public double getWeight() { return weight; }
+
+    public void setName(String name) { this.name = name; }
+    public void setAge(int age) { this.age = age; }
+    public void setWeight(double weight) { this.weight = weight; }
+}
+
+// Abstract Activity class using abstraction
+abstract class Activity {
+    protected String date;
+    protected int duration; // in minutes
+
+    public Activity(String date, int duration) {
+        this.date = date;
+        this.duration = duration;
+    }
+
+    public abstract double calculateEnergyBurned();
+
+    public String getDate() { return date; }
+    public int getDuration() { return duration; }
+}
+
+// PhysicalActivity class using inheritance
+class PhysicalActivity extends Activity {
+    private String type; // e.g., walking, running
+
+    public PhysicalActivity(String date, int duration, String type) {
+        super(date, duration);
+        this.type = type;
+    }
+
+    @Override
+    public double calculateEnergyBurned() {
+        switch (type.toLowerCase()) {
+            case "walking": return duration * 3.5;
+            case "running": return duration * 8.0;
+            default: return duration * 4.0;
+        }
+    }
+}
+
+// ScreenTime class
+class ScreenTime extends Activity {
+    public ScreenTime(String date, int duration) {
+        super(date, duration);
+    }
+
+    @Override
+    public double calculateEnergyBurned() {
+        return duration * 1.5; // lower energy use
+    }
+}
+
+// EnergyTracker class to manage all activities
+class EnergyTracker {
+    private ArrayList<Activity> activities;
+
+    public EnergyTracker() {
+        activities = new ArrayList<>();
+    }
+
+    public void addActivity(Activity activity) {
+        activities.add(activity);
+    }
+
+    public double calculateTotalEnergy() {
+        double total = 0;
+        for (Activity a : activities) {
+            total += a.calculateEnergyBurned();
+        }
+        return total;
+    }
+
+    public void showSummary() {
+        System.out.println("------ Energy Usage Summary ------");
+        for (Activity a : activities) {
+            System.out.println(a.getClass().getSimpleName() + " on " + a.getDate() +
+                " | Duration: " + a.getDuration() + " mins | Energy: " + a.calculateEnergyBurned() + " kcal");
+        }
+        System.out.println("Total Energy Burned: " + calculateTotalEnergy() + " kcal");
+    }
+}
+
+// Main class
+public class PersonalEnergyTracker {
+    public static void main(String[] args) {
+        User user = new User("Kabya", 21, 65.0);
+
+        EnergyTracker tracker = new EnergyTracker();
+
+        tracker.addActivity(new PhysicalActivity("2025-04-08", 45, "running"));
+        tracker.addActivity(new ScreenTime("2025-04-08", 90));
+        tracker.addActivity(new PhysicalActivity("2025-04-09", 30, "walking"));
+        tracker.addActivity(new ScreenTime("2025-04-09", 120));
+
+        tracker.showSummary();
+    }
+}
